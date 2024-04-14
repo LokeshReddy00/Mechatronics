@@ -1,0 +1,62 @@
+
+#define fsrpin1 A0
+#define fsrpin2 A1
+#define ledpin1 13
+#define ledpin2 12 
+
+int previousPressure1 = 0;
+int previousPressure2 = 0;
+long previousTime = 0;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(ledpin1, OUTPUT);
+  pinMode(ledpin2, OUTPUT);
+}
+
+void loop() {
+  // Read FSR 1
+  int currentPressure1 = analogRead(fsrpin1);
+  
+  // Read FSR 2
+  int currentPressure2 = analogRead(fsrpin2);
+
+  long currentTime = millis();
+
+  // Print data for FSR 1
+  if (currentTime - previousTime >= 150) {
+    Serial.print("FSR1 (");
+    Serial.print(currentTime);
+    Serial.print(", ");
+    Serial.print(currentPressure1);
+    Serial.println(")");
+  }
+
+  // Toggle LED 1 based on FSR 1 pressure
+  if (currentPressure1 > 500) {
+    digitalWrite(ledpin1, HIGH);
+  } else {
+    digitalWrite(ledpin1, LOW);
+  }
+
+  // Print data for FSR 2
+  if (currentTime - previousTime >= 150) {
+    Serial.print("FSR2 (");
+    Serial.print(currentTime);
+    Serial.print(", ");
+    Serial.print(currentPressure2);
+    Serial.println(")");
+    previousTime = currentTime; // Update time only after both FSRs are printed
+  }
+
+  // Toggle LED 2 based on FSR 2 pressure
+  if (currentPressure2 > 500) {
+    digitalWrite(ledpin2, HIGH);
+  } else {
+    digitalWrite(ledpin2, LOW);
+  }
+
+  // Update previous pressure values
+  previousPressure1 = currentPressure1;
+  previousPressure2 = currentPressure2;
+}
